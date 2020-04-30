@@ -8,7 +8,7 @@ namespace cleaner
     class cleaner
     {
 
-        public string csvfile;
+        public string csvfilepath;
 
         public csvvalues readvalues;
 
@@ -36,7 +36,7 @@ namespace cleaner
             {
                 if (filename.Contains(".csv"))
                 {
-                    this.csvfile = filename;
+                    this.csvfilepath = filename;
                     return true;
                 }
             }
@@ -48,7 +48,7 @@ namespace cleaner
         {
             try
             {
-                this.readvalues.add("test"); ffff // bookmark, build read values from here
+                this.readvalues.build(this.csvfilepath);
             }
             catch(Exception ex)
             {
@@ -61,21 +61,76 @@ namespace cleaner
 
     }
 
+
+
     class csvvalues
     {
-        public string[] stocks;
-        public string[] prices;
+        public short stockcolnum, pricecolnum;
+        public string id;
+        public string[] stocks, prices;
 
         public csvvalues()
         {
             this.stocks = new string[0];
             this.prices = new string[0];
+        }
 
+        public void build(string csvfilepath)
+        {
+            short ii = 0;
+
+            foreach (string line in File.ReadLines(csvfilepath))
+            {
+                if(ii == 0)
+                {
+                    this.grabindexes(line);
+                }
+                else
+                {
+                    if(ii == 1)
+                    {
+                        this.id = line.Split(',')[0];
+                    }
+
+                    if (line.Split(',')[0] == this.id)
+                    {
+                        try
+                        {
+                            this.add(line.Split(',')[this.stockcolnum], line.Split(',')[this.pricecolnum]);
+                        }
+                        catch(Exception ex)
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+
+                ii++;
+            }
+        }
+
+        public void grabindexes(string titleline)
+        {
+            short ii = 0;
+
+            foreach (string cell in titleline.ToLower().Split(','))
+            {
+                if(cell.Contains("symbol"))
+                {
+                    this.stockcolnum = ii;
+                }
+
+                if(cell.Contains("current value"))
+                {
+                    this.pricecolnum = ii;
+                }
+
+                ii++;
+            }
         }
 
         public void add(string stock)
         {
-
             try
             {
                 this.add(stock, "");
@@ -116,6 +171,8 @@ namespace cleaner
             this.stocks = new string[this.stocks.Length + 1];
             this.prices = new string[this.prices.Length + 1];
 
+            ii = 0;
+
             foreach (string old in newstocks)
             {
                 this.stocks[ii] = old;
@@ -134,6 +191,11 @@ namespace cleaner
             this.prices[ii] = price;
 
         }
+
+    }
+
+    class filebuffer
+    {
 
     }
 
