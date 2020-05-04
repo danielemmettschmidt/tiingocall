@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.IO;
+using cleaner_driver;
 
 namespace cleaner
 {
@@ -28,7 +29,7 @@ namespace cleaner
             }
             else
             {
-                cleaner _cleaner = new cleaner(dir);
+                Parser _parser = new Parser(dir);
             }
 
 

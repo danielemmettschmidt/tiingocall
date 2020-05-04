@@ -5,7 +5,7 @@ using System.Text;
 
 namespace cleaner
 {
-    class cleaner
+    class Parser
     {
 
         public string csvfilepath, manifestfilepath;
@@ -16,7 +16,7 @@ namespace cleaner
 
         private bool isstillgood;
 
-        public cleaner(string initdir)
+        public Parser(string initdir)
         {
             this.readvalues = new CSVValues();
             this.writevalues = new CSVValues();

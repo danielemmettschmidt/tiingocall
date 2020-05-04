@@ -1,0 +1,2 @@
+SELECT *
+FROM `stockplanner`.`manifest`;
