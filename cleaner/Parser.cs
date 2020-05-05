@@ -14,7 +14,7 @@ namespace cleaner
 
         public CSVValues writevalues;
 
-        private bool isstillgood;
+        public bool isstillgood;
 
         public Parser(string initdir)
         {

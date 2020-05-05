@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Security.Permissions;
 using System.IO;
 using cleaner_driver;
 
@@ -26,11 +27,25 @@ namespace cleaner
             if (valdir(dir) == false)
             {
                 Console.WriteLine("First argument needs to be a valid directory.");
+                return;
             }
             else
             {
                 Parser _parser = new Parser(dir);
+
+                if (_parser.isstillgood == true)
+                {
+                    Console.WriteLine("Password:");
+
+                    string pw = Console.ReadLine();
+
+                    MYSQLEngine.WriteManifest(_parser, pw);
+
+                }
+
             }
+
+
 
 
         }

@@ -5,7 +5,6 @@ C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\cleaner_driver.runtimec
 C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\cleaner_driver.dll
 C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\cleaner_driver.pdb
 C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.csprojAssemblyReference.cache
-C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.csproj.CoreCompileInputs.cache
 C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.AssemblyInfoInputs.cache
 C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.AssemblyInfo.cs
 C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.dll
@@ -22,3 +21,15 @@ C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.dl
 C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\K4os.Hash.xxHash.dll
 C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\MySql.Data.xml
 C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.csproj.CopyComplete
+C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\Microsoft.Win32.SystemEvents.dll
+C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\System.Drawing.Common.dll
+C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\System.Security.Permissions.dll
+C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\System.Windows.Extensions.dll
+C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\System.Configuration.ConfigurationManager.dll
+C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
+C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.csproj.CoreCompileInputs.cache
