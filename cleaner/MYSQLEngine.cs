@@ -54,13 +54,8 @@ namespace cleaner_driver
             Console.WriteLine("Done.");
         }
 
-        public static void WriteManifest(Parser parser, string pw)
+        public static void WriteManifest(Parser parser, EngineQuery eq)
         {
-
-            EngineQuery eq = new EngineQuery();
-            eq.server = "167.71.172.36";
-            eq.user = "root";
-            eq.password = pw;
 
             // write old table to archive
 
