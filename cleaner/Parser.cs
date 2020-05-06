@@ -12,15 +12,12 @@ namespace cleaner
 
         public CSVValues readvalues;
 
-        public CSVValues writevalues;
+        public ManifestValues manifestvalues;
 
         public bool isstillgood;
 
         public Parser(string initdir)
         {
-            this.readvalues = new CSVValues();
-            this.writevalues = new CSVValues();
-
             this.isstillgood = this.getfilenames(initdir);
 
             if (this.isstillgood == true)
@@ -30,7 +27,7 @@ namespace cleaner
 
             if (this.isstillgood == true)
             {
-                this.isstillgood = this.BuildWriteValues();
+                this.isstillgood = this.BuildManifestValues();
             }
 
         }
@@ -67,7 +64,7 @@ namespace cleaner
         {
             try
             {
-                this.readvalues.Build(this.csvfilepath, BuildDirective.Read);
+                this.readvalues = new CSVValues(this.csvfilepath);
             }
             catch (Exception ex)
             {
@@ -78,11 +75,11 @@ namespace cleaner
             return true;
         }
 
-        public bool BuildWriteValues()
+        public bool BuildManifestValues()
         {
             try
             {
-                this.writevalues.Build(this.manifestfilepath, BuildDirective.Write);  /// bookmark
+                this.manifestvalues = new ManifestValues(this.manifestfilepath);
             }
             catch (Exception ex)
             {

@@ -14,9 +14,9 @@ namespace cleaner
             this.price = "";
         }
 
-        public CSVValue(string stock)
+        public CSVValue(string stck)
         {
-            this.stock = stock;
+            this.stock = stck;
             this.price = "";
         }
 
@@ -32,4 +32,5 @@ namespace cleaner
         }
 
     }
+
 }

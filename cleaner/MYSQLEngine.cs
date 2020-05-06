@@ -20,8 +20,6 @@ namespace cleaner_driver
 
         public static void Execute(EngineQuery EQ)
         {
-            EQ.password = "fr*hj4hR9000";            ///////////////////////////////////////////////////////////////////////////REMOVE
-
             string connStr =      "server="
                                 + EQ.server 
                                 + ";user="
@@ -68,11 +66,28 @@ namespace cleaner_driver
 
 
 
+
             // drop old table
 
             eq.query = "DELETE FROM `stockplanner`.`manifest`;";
 
             Execute(eq);
+
+
+            // write new table
+
+            foreach(ManifestValue mv in parser.manifestvalues.values)
+            {
+                eq.query =  "INSERT INTO `stockplanner`.`manifest` (`stock`, `target_percentage`, `write_date`) VALUES ('"+
+                            mv.stock +
+                            "'," +
+                            mv.targetpercentage +
+                            ",'" +
+                            timenow() +
+                            "');";
+
+                Execute(eq);
+            }
 
 
         }

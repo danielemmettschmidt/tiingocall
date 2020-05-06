@@ -6,46 +6,16 @@ using System.Text;
 namespace cleaner
 {
 
-    enum BuildDirective
-    {
-        Read,
-        Write
-    }
-
     class CSVValues
     {
         public short stockcolnum, pricecolnum;
         public string id;
         public CSVValue[] values;
 
-        public CSVValues()
+        public CSVValues(string csvfilepath)
         {
             this.values = new CSVValue[0];
-        }
 
-        ~CSVValues()
-        {
-
-        }
-
-
-        public void Build(string csvfilepath, BuildDirective bd)
-        {
-
-            if (bd == BuildDirective.Write)
-            {
-                foreach (string line in File.ReadLines(csvfilepath))
-                {
-                    this.add(line);
-                }
-                return;
-            }
-
-            BuildRead(csvfilepath);
-        }
-
-        public void BuildRead(string csvfilepath)
-        {
             short ii = 0;
 
             foreach (string line in File.ReadLines(csvfilepath))
@@ -76,6 +46,11 @@ namespace cleaner
 
                 ii++;
             }
+        }
+
+        ~CSVValues()
+        {
+
         }
 
         public void grabindexes(string titleline)
@@ -140,5 +115,7 @@ namespace cleaner
         }
 
     }
+
+    
 
 }

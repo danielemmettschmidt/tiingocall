@@ -1,4 +1,8 @@
 INSERT INTO `stockplanner`.`manifest`
-(`stock`,`write_date`)
+(`stock`,
+`target_percentage`,
+`write_date`)
 VALUES
-('ASEA', '2020-05-04 13:01:01');
+('ASEA',
+50,
+'2020-05-06 14:43:31');

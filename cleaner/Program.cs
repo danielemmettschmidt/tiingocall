@@ -45,16 +45,11 @@ namespace cleaner
 
             }
 
-
-
-
         }
 
         static string bettergetassembly()
         {
             string start = Path.GetDirectoryName(Assembly.GetAssembly(typeof(Program)).CodeBase);
-            string build = "";
-            string ret = "";
 
             if (start.Contains("file:\\file:") == true)
             {
@@ -66,23 +61,7 @@ namespace cleaner
                 start = start.Replace("file:\\", "");
             }
 
-            //foreach (char c in start)
-            //{
-            //    if(c == '\\')
-            //    {
-            //        ret = ret + build + c;
-            //        build = "";
-
-            //    }
-            //    else
-            //    {
-            //        build = build + c;
-            //    }
-            //}
-
-            ret = start; // either this or the comment block
-
-            return ret;
+            return start;
         }
 
         public static bool valdir(string input)
