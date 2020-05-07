@@ -6,12 +6,7 @@ using System.Text;
 namespace cleaner
 {
 
-    enum char_is
-    {
-        a_number,
-        a_decimal,
-        other
-    }
+
 
     class ManifestValues
     {
@@ -80,95 +75,6 @@ namespace cleaner
 
         }
 
-        private char_is charclassify(char c)
-        {
-            if(char.IsNumber(c) == true)
-            {
-                return char_is.a_number;
-            }
-            else if(c == '.')
-            {
-                return char_is.a_decimal;
-            }
-            else
-            {
-                return char_is.other;
-            }
-        }
-
-        private string parsetpstr(string stock, string tpstr)
-        {
-            if(tpstr == "0")
-            {
-                return tpstr;
-            }
-
-            short dii = -1;  // iterator for chars after decimal, -1 means no decimals yet found
-
-            string buildstring = "";
-            bool foundnonzero = false;
-
-            foreach (char c in tpstr)
-            {
-                switch (charclassify(c))
-                {
-                    case char_is.a_number:
-
-                        if (c != '0')
-                        {
-                            foundnonzero = true;
-                        }
-
-                        if (foundnonzero == true)
-                        {
-                            buildstring = buildstring + c;
-                        }
-
-                        if (dii != -1)
-                        {
-                            dii++;
-                        }
-
-                        break;
-
-                    case char_is.a_decimal:
-                        if (dii != -1)
-                        {
-                            throw new Exception("Multiple decimals found in target percentage for row \"" + stock + "," + tpstr + "\".");
-                        }
-
-                        dii = 0;
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-
-            if(buildstring == "")
-            {
-                return "0";
-            }
-            else if (dii > 4)
-            {
-                throw new Exception("Too many digits past the decimal found in target percentage for row \"" + stock + "," + tpstr + "\"; maximum is four.");
-            }
-            else if (dii != -1)
-            {
-                for (; dii < 4; dii++)
-                {
-                    buildstring = buildstring + '0';
-                }
-
-            }
-            else
-            {
-                buildstring = buildstring + "0000";
-            }
-
-            return buildstring;
-        }
-
         public void add(string stock, string tpstr)
         {
             
@@ -192,7 +98,7 @@ namespace cleaner
                 ii++;
             }
 
-            this.values[ii] = new ManifestValue(stock, parsetpstr(stock, tpstr));
+            this.values[ii] = new ManifestValue(stock, CSVValues.parse_decimal_str(stock, tpstr));
         }
 
     }

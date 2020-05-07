@@ -40,9 +40,11 @@ namespace cleaner
                     EngineQuery eq = new EngineQuery();
                     eq.server = "167.71.172.36";
                     eq.user = "root";
-                    eq.password = Console.ReadLine(); 
+                    eq.password = Console.ReadLine();
 
-                    MYSQLEngine.WriteManifest(_parser, eq);
+                    MYSQLEngine.WriteManifest(_parser, in eq);
+
+                    MYSQLEngine.WriteSource(_parser, in eq);
 
                 }
 

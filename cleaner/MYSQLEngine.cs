@@ -54,7 +54,7 @@ namespace cleaner_driver
             Console.WriteLine("Done.");
         }
 
-        public static void WriteManifest(Parser parser, EngineQuery eq)
+        public static void WriteManifest(Parser parser, in EngineQuery eq)
         {
 
             // write old table to archive
@@ -71,12 +71,47 @@ namespace cleaner_driver
 
             // write new table
 
-            foreach(ManifestValue mv in parser.manifestvalues.values)
+            foreach (ManifestValue mv in parser.manifestvalues.values)
             {
-                eq.query =  "INSERT INTO `stockplanner`.`manifest` (`stock`, `target_percentage`, `write_date`) VALUES ('"+
+                eq.query = "INSERT INTO `stockplanner`.`manifest` (`stock`, `target_percentage`, `write_date`) VALUES ('" +
                             mv.stock +
                             "'," +
                             mv.targetpercentage +
+                            ",'" +
+                            timenow() +
+                            "');";
+
+                Execute(eq);
+            }
+
+
+        }
+
+        public static void WriteSource(Parser parser, in EngineQuery eq)
+        {
+
+            // write old table to archive
+
+
+
+
+            // drop old table
+
+            eq.query = "DELETE FROM `stockplanner`.`source`;";
+
+            Execute(eq);
+
+
+            // write new table
+
+            foreach (CSVValue csvv in parser.readvalues.values)
+            {
+                eq.query = "INSERT INTO `stockplanner`.`source` (`stock`, `current_value`, `quantity`, `write_date`) VALUES ('" +
+                            csvv.stock +
+                            "'," +
+                            csvv.current_value +
+                            "," +
+                            csvv.quantity +
                             ",'" +
                             timenow() +
                             "');";

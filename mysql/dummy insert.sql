@@ -1,8 +1,11 @@
-INSERT INTO `stockplanner`.`manifest`
+INSERT INTO `stockplanner`.`source`
 (`stock`,
-`target_percentage`,
+`current_value`,
+`quantity`,
 `write_date`)
 VALUES
 ('ASEA',
-50,
-'2020-05-06 14:43:31');
+300,
+12400,
+'2020-05-06 15:26:20');
+
