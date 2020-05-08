@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 using System.Data.OleDb;
+using cleaner_driver;
 
 namespace cleaner
 {
@@ -17,8 +18,15 @@ namespace cleaner
     class CSVValues
     {
         public short stockcolnum, valcolnum, quantcolnum;
+        public bool initialized;
         public string id;
         public CSVValue[] values;
+
+        public CSVValues()
+        {
+            this.values = new CSVValue[0];
+            this.initialized = false;
+        }
 
         public CSVValues(List<List<string>> input)
         {
@@ -31,6 +39,8 @@ namespace cleaner
                 }
                 this.add(row[0], row[1], row[2], row[3]);
             }
+
+            this.initialized = true;
         }
 
         public CSVValues(string csvfilepath)
@@ -74,6 +84,8 @@ namespace cleaner
 
                 ii++;
             }
+
+            this.initialized = true;
         }
 
         ~CSVValues()
@@ -159,6 +171,10 @@ namespace cleaner
                 DateTime process = DateTime.Parse(dte);
 
                 dte = process.ToString("yyyy-MM-dd HH:mm:ss");
+            }
+            else
+            {
+                dte = MYSQLEngine.timenow();
             }
 
             CSVValue[] newvalues = new CSVValue[this.values.Length];

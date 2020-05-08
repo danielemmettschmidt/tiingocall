@@ -112,7 +112,7 @@ namespace cleaner_driver
 
             // write old table to archive
 
-            ArchiveSource(eq);
+            ArchiveSource(parser.readvalues, eq);
 
             // drop old table
 
@@ -132,7 +132,7 @@ namespace cleaner_driver
                             "," +
                             csvv.quantity +
                             ",'" +
-                            timenow() +
+                            csvv.write_date +
                             "');";
 
                 Execute(eq);
@@ -152,9 +152,19 @@ namespace cleaner_driver
 
         public static void ArchiveSource(in EngineQuery eq)
         {
-            foreach (CSVValue csvv in ReadSource(eq).values)
+            ArchiveSource(new CSVValues(), eq);
+        }
+
+        public static void ArchiveSource(CSVValues csvvs, in EngineQuery eq)
+        {
+            if (csvvs.initialized == false)
             {
-                eq.query =  "INSERT INTO `stockplanner`.`source_archive` (`stock`, `write_date`, `current_value`, `quantity`) VALUES (" +
+                csvvs = ReadSource(eq);
+            }
+            
+            foreach (CSVValue csvv in csvvs.values)
+            {
+                eq.query = "INSERT INTO `stockplanner`.`source_archive` (`stock`, `write_date`, `current_value`, `quantity`) VALUES (" +
                             "'" + csvv.stock + "', " +
                             "'" + csvv.write_date + "', " +
                             csvv.current_value + ", " +
