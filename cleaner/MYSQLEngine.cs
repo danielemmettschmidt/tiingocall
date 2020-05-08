@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Runtime.InteropServices;
 using cleaner;
@@ -18,7 +19,7 @@ namespace cleaner_driver
 
         }
 
-        public static void Execute(EngineQuery EQ)
+        public static List<List<string>> Execute(EngineQuery EQ)
         {
             string connStr =      "server="
                                 + EQ.server 
@@ -30,19 +31,37 @@ namespace cleaner_driver
                                 + EQ.password;
 
             MySqlConnection conn = new MySqlConnection(connStr);
+
+            List<List<string>> ret = new List<List<string>>();
+
             try
             {
-                Console.WriteLine("Connecting to MySQL...");
                 conn.Open();
 
                 
                 MySqlCommand cmd = new MySqlCommand(EQ.query, conn);
                 MySqlDataReader rdr = cmd.ExecuteReader();
 
-                while (rdr.Read())
+                
+
+                if (EQ.query.ToLower().Contains("select"))
                 {
-                    Console.WriteLine(rdr[0] + " -- " + rdr[1]);
+                    while (rdr.Read())
+                    {
+                        List<string> tackon = new List<string>();
+
+                        short ii = 0;
+
+                        while(ii < rdr.FieldCount)
+                        {
+                            tackon.Add(rdr[ii].ToString());
+                            ii++;
+                        }
+
+                        ret.Add(tackon);
+                    }
                 }
+                
                 rdr.Close();
             }
             catch (Exception ex)
@@ -51,7 +70,8 @@ namespace cleaner_driver
             }
 
             conn.Close();
-            Console.WriteLine("Done.");
+
+            return ret;
         }
 
         public static void WriteManifest(Parser parser, in EngineQuery eq)
@@ -92,8 +112,7 @@ namespace cleaner_driver
 
             // write old table to archive
 
-
-
+            ArchiveSource(eq);
 
             // drop old table
 
@@ -120,6 +139,30 @@ namespace cleaner_driver
             }
 
 
+        }
+
+        public static CSVValues ReadSource(in EngineQuery eq)
+        {
+            eq.query = "SELECT * FROM stockplanner.source;";
+
+            CSVValues ret = new CSVValues(Execute(eq));
+
+            return ret;
+        }
+
+        public static void ArchiveSource(in EngineQuery eq)
+        {
+            foreach (CSVValue csvv in ReadSource(eq).values)
+            {
+                eq.query =  "INSERT INTO `stockplanner`.`source_archive` (`stock`, `write_date`, `current_value`, `quantity`) VALUES (" +
+                            "'" + csvv.stock + "', " +
+                            "'" + csvv.write_date + "', " +
+                            csvv.current_value + ", " +
+                            csvv.quantity +
+                            "); ";
+
+                Execute(eq);
+            }
         }
 
     }

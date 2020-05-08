@@ -2,6 +2,8 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
+using System.Configuration;
+using System.Data.OleDb;
 
 namespace cleaner
 {
@@ -17,6 +19,19 @@ namespace cleaner
         public short stockcolnum, valcolnum, quantcolnum;
         public string id;
         public CSVValue[] values;
+
+        public CSVValues(List<List<string>> input)
+        {
+            this.values = new CSVValue[0];
+            foreach (List<string> row in input)
+            {
+                if (row.Count != 4)
+                {
+                    throw new Exception(row.Count + " is too many cells for row identified by first cell " + row[0] + " and last cell " + row[row.Count]);
+                }
+                this.add(row[0], row[1], row[2], row[3]);
+            }
+        }
 
         public CSVValues(string csvfilepath)
         {
@@ -134,7 +149,17 @@ namespace cleaner
 
         public void add(string stock, string prce, string quant)
         {
+            this.add(stock,prce,quant,"");
+        }
 
+        public void add(string stock, string prce, string quant, string dte)
+        {
+            if(dte != "")
+            {
+                DateTime process = DateTime.Parse(dte);
+
+                dte = process.ToString("yyyy-MM-dd HH:mm:ss");
+            }
 
             CSVValue[] newvalues = new CSVValue[this.values.Length];
 
@@ -142,7 +167,7 @@ namespace cleaner
 
             foreach (CSVValue old in this.values)
             {
-                newvalues[ii] = new CSVValue(old.stock,old.current_value,old.quantity);
+                newvalues[ii] = new CSVValue(old.stock,old.current_value,old.quantity, old.write_date);
                 ii++;
             }
 
@@ -152,11 +177,11 @@ namespace cleaner
 
             foreach (CSVValue newv in newvalues)
             {
-                this.values[ii] = new CSVValue(newv.stock,newv.current_value,newv.quantity);
+                this.values[ii] = new CSVValue(newv.stock,newv.current_value,newv.quantity, newv.write_date);
                 ii++;
             }
 
-            this.values[ii] = new CSVValue(stock, prce, quant);
+            this.values[ii] = new CSVValue(stock, prce, quant, dte);
 
         }
 

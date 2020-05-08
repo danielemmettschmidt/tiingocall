@@ -6,7 +6,7 @@ namespace cleaner
 {
     class CSVValue
     {
-        public string stock, current_value, quantity;
+        public string stock, current_value, quantity, write_date;
 
         public CSVValue()
         {
@@ -27,6 +27,14 @@ namespace cleaner
             this.stock = stock;
             this.current_value = prce;
             this.quantity = quant;
+        }
+
+        public CSVValue(string stock, string prce, string quant, string dte)
+        {
+            this.stock = stock;
+            this.current_value = prce;
+            this.quantity = quant;
+            this.write_date = dte;
         }
 
         ~CSVValue()
