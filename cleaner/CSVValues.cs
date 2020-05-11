@@ -217,6 +217,12 @@ namespace cleaner
             }
         }
 
+
+        public static string parse_decimal_str(string decnum)
+        {
+            try { return parse_decimal_str("", decnum); }
+            catch (Exception ex) { throw new Exception("Failed to parse decimal string " + decnum); }
+        }
         public static string parse_decimal_str(string stock, string decnum)
         {
             if (decnum == "0")

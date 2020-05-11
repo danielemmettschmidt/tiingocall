@@ -74,7 +74,7 @@ namespace cleaner_driver
             return ret;
         }
 
-        public static void WriteManifest(Parser parser, in EngineQuery eq)
+        public static void WriteManifest(Parser parser)
         {
 
             // write old table to archive
@@ -84,16 +84,15 @@ namespace cleaner_driver
 
             // drop old table
 
-            eq.query = "DELETE FROM `stockplanner`.`manifest`;";
+            parser.eq.query = "DELETE FROM `stockplanner`.`manifest`;";
 
-            Execute(eq);
-
+            Execute(parser.eq);
 
             // write new table
 
             foreach (ManifestValue mv in parser.manifestvalues.values)
             {
-                eq.query = "INSERT INTO `stockplanner`.`manifest` (`stock`, `target_percentage`, `write_date`) VALUES ('" +
+                parser.eq.query = "INSERT INTO `stockplanner`.`manifest` (`stock`, `target_percentage`, `write_date`) VALUES ('" +
                             mv.stock +
                             "'," +
                             mv.targetpercentage +
@@ -101,31 +100,45 @@ namespace cleaner_driver
                             timenow() +
                             "');";
 
-                Execute(eq);
+                Execute(parser.eq);
             }
 
+            parser.eq.query = "";
+        }
+
+        public static void WriteYCA(EngineQuery eq, string amnt)
+        {
+            eq.query = "INSERT INTO `stockplanner`.`yearly_contribution` (`write_date`, `yearly_contribution_amount`) VALUES(" +
+                        "'" + timenow() + "'," +
+                        amnt +
+                        ");"
+                        ;
+
+            Execute(eq);
+
+            eq.query = "";
 
         }
 
-        public static void WriteSource(Parser parser, in EngineQuery eq)
+        public static void WriteSource(Parser parser)
         {
 
             // write old table to archive
 
-            ArchiveSource(parser.readvalues, eq);
+            ArchiveSource(parser.readvalues, parser.eq);
 
             // drop old table
 
-            eq.query = "DELETE FROM `stockplanner`.`source`;";
+            parser.eq.query = "DELETE FROM `stockplanner`.`source`;";
 
-            Execute(eq);
+            Execute(parser.eq);
 
 
             // write new table
 
             foreach (CSVValue csvv in parser.readvalues.values)
             {
-                eq.query = "INSERT INTO `stockplanner`.`source` (`stock`, `current_value`, `quantity`, `write_date`) VALUES ('" +
+                parser.eq.query = "INSERT INTO `stockplanner`.`source` (`stock`, `current_value`, `quantity`, `write_date`) VALUES ('" +
                             csvv.stock +
                             "'," +
                             csvv.current_value +
@@ -135,10 +148,10 @@ namespace cleaner_driver
                             csvv.write_date +
                             "');";
 
-                Execute(eq);
+                Execute(parser.eq);
             }
 
-
+            parser.eq.query = "";
         }
 
         public static CSVValues ReadSource(in EngineQuery eq)
@@ -146,6 +159,8 @@ namespace cleaner_driver
             eq.query = "SELECT * FROM stockplanner.source;";
 
             CSVValues ret = new CSVValues(Execute(eq));
+
+            eq.query = "";
 
             return ret;
         }
