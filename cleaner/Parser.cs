@@ -30,7 +30,7 @@ namespace cleaner
 
             if(this.isstillgood == true)
             {
-                this.SetYCAValue();
+                this.isstillgood = this.SetYCAValue();
             }
 
             if (this.isstillgood == true)
@@ -41,6 +41,16 @@ namespace cleaner
             if (this.isstillgood == true)
             {
                 this.isstillgood = this.BuildManifestValues();
+            }
+
+            if (this.isstillgood == true)
+            {
+                this.buylist.SetBuyList(MYSQLEngine.ReadBuyList(ineq));
+
+                foreach (Buy b in this.buylist.buys)
+                {
+                    Console.WriteLine(b.ToString());
+                }
             }
 
         }
@@ -86,8 +96,6 @@ namespace cleaner
             throw new Exception("No file with ending \"" + search + "\" found in " + dir + ".");
         }
 
-
-
         public bool SetYCAValue()
         {
             short ii = 0;
@@ -98,7 +106,19 @@ namespace cleaner
                 {
                     if (ii == 0)
                     {
-                        string parsedstr = CSVValues.parse_decimal_str(line);
+                        string instr = CSVValues.parse_decimal_str(line), parsedstr = "";
+
+                        int sii = (instr.Length - 2);
+
+                        foreach (char c in instr)
+                        {
+                            if (sii > 0)
+                            {
+                                parsedstr = parsedstr + c;
+                            }
+
+                            sii--;
+                        }
 
                         try
                         {
@@ -115,6 +135,9 @@ namespace cleaner
                         try
                         {
                             MYSQLEngine.WriteYCA(this.eq, parsedstr);
+
+                            //////////////////////////////////////////////////////write function to delete yca file
+
                             return true;
                         }
                         catch (Exception ex)
@@ -127,6 +150,9 @@ namespace cleaner
             }
             else
             {
+                //////////////////////////////////////////////////////////////////pull value from yca view
+                
+                
                 return false;
             }        
         }
@@ -160,7 +186,6 @@ namespace cleaner
 
             return true;
         }
-
     }
 
 

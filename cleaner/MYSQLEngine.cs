@@ -10,7 +10,7 @@ namespace cleaner_driver
 {
     class MYSQLEngine
     {
-        
+
         // STATIC BASIC FUNCTIONS
 
         public static string timenow()
@@ -21,10 +21,10 @@ namespace cleaner_driver
 
         public static List<List<string>> Execute(EngineQuery EQ)
         {
-            string connStr =      "server="
-                                + EQ.server 
+            string connStr = "server="
+                                + EQ.server
                                 + ";user="
-                                + EQ.user 
+                                + EQ.user
                                 + ";database="
                                 + EQ.database
                                 + ";port=3306;password="
@@ -38,11 +38,11 @@ namespace cleaner_driver
             {
                 conn.Open();
 
-                
+
                 MySqlCommand cmd = new MySqlCommand(EQ.query, conn);
                 MySqlDataReader rdr = cmd.ExecuteReader();
 
-                
+
 
                 if (EQ.query.ToLower().Contains("select"))
                 {
@@ -52,7 +52,7 @@ namespace cleaner_driver
 
                         short ii = 0;
 
-                        while(ii < rdr.FieldCount)
+                        while (ii < rdr.FieldCount)
                         {
                             tackon.Add(rdr[ii].ToString());
                             ii++;
@@ -61,7 +61,7 @@ namespace cleaner_driver
                         ret.Add(tackon);
                     }
                 }
-                
+
                 rdr.Close();
             }
             catch (Exception ex)
@@ -176,7 +176,7 @@ namespace cleaner_driver
             {
                 csvvs = ReadSource(eq);
             }
-            
+
             foreach (CSVValue csvv in csvvs.values)
             {
                 eq.query = "INSERT INTO `stockplanner`.`source_archive` (`stock`, `write_date`, `current_value`, `quantity`) VALUES (" +
@@ -188,6 +188,13 @@ namespace cleaner_driver
 
                 Execute(eq);
             }
+        }
+
+        public static List<List<string>> ReadBuyList(EngineQuery eq)
+        {
+            eq.query = "SELECT stock, underage FROM stockplanner.compute_buy_list;";
+
+            return Execute(eq);
         }
 
     }

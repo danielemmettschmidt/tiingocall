@@ -17,7 +17,7 @@ namespace cleaner
             if(args.Length == 0)
             {
                 Console.WriteLine("You didn't supply any arguments.");
-                dir = bettergetassembly();
+                dir = ImprovedGetAssembly();
             }
             else
             {
@@ -52,7 +52,7 @@ namespace cleaner
 
         }
 
-        static string bettergetassembly()
+        static string ImprovedGetAssembly()
         {
             string start = Path.GetDirectoryName(Assembly.GetAssembly(typeof(Program)).CodeBase);
 

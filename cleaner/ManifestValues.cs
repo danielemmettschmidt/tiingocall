@@ -6,8 +6,6 @@ using System.Text;
 namespace cleaner
 {
 
-
-
     class ManifestValues
     {
         public ManifestValue[] values;
