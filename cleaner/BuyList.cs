@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace cleaner_driver
@@ -55,9 +56,9 @@ namespace cleaner_driver
                 this.add(qresult[ii][0], underages[ii], dailycontributionamount);
             }
 
-            while (this.buys[buys.Length - 1].dollar_amount < 100)
+            while (this.buys[buys.Length - 1].dollar_amount < (dailycontributionamount / 10) || this.buys[buys.Length-1].dollar_amount < 105)
             {
-                recompute(dailycontributionamount);
+                this.recompute(dailycontributionamount);
             }
 
         }

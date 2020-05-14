@@ -1,9 +1,9 @@
 CREATE VIEW `consolidate_portfolio` AS
 SELECT 	m.stock, 
-		s.current_value as "current_value", 
-		s.quantity as "quantity",
+		ifnull(s.current_value, 0)  as "current_value", 
+		ifnull(s.quantity, 0) as "quantity",
         m.target_percentage as "target_percent"
 FROM `stockplanner`.`source` as s
-JOIN `stockplanner`.`manifest` as m
+RIGHT JOIN `stockplanner`.`manifest` as m
 ON (m.stock is not null and m.stock = s.stock)
 order by 'stock' asc;
