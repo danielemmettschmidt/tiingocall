@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Security.Permissions;
 using System.IO;
+using System.Threading;
 using cleaner_driver;
 
 namespace cleaner
@@ -45,8 +46,19 @@ namespace cleaner
                     MYSQLEngine.WriteManifest(_parser);
 
                     MYSQLEngine.WriteSource(_parser);
+                                        
+                    for(int ii = 0; ii < 3; ii++)
+                    {
+                        Thread.Sleep(1000);
+
+                        Console.WriteLine("" + (ii + 1));
+                    }
+
+                    _parser.ComputeBuyList();
 
                 }
+
+                Console.ReadLine();
 
             }
 

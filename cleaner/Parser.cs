@@ -43,16 +43,19 @@ namespace cleaner
                 this.isstillgood = this.BuildManifestValues();
             }
 
+        }
+
+        public void ComputeBuyList()
+        {
             if (this.isstillgood == true)
             {
-                this.buylist.SetBuyList(MYSQLEngine.ReadBuyList(ineq));
-
-                foreach (Buy b in this.buylist.buys)
-                {
-                    Console.WriteLine(b.ToString());
-                }
+                this.buylist.SetBuyList(MYSQLEngine.ReadBuyList(this.eq));
             }
 
+            foreach (Buy b in this.buylist.buys)
+            {
+                Console.WriteLine(b.ToString());
+            }
         }
 
         public bool getfilenames(string initdir)

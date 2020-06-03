@@ -4,7 +4,6 @@ C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\cleaner_driver.runtimec
 C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\cleaner_driver.runtimeconfig.dev.json
 C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\cleaner_driver.dll
 C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\cleaner_driver.pdb
-C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.csprojAssemblyReference.cache
 C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.AssemblyInfoInputs.cache
 C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.AssemblyInfo.cs
 C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.dll
