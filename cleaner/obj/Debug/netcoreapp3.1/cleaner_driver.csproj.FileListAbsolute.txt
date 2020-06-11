@@ -32,3 +32,4 @@ C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\System.Configuration.Co
 C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
 C:\Dev\GitHub\tiingocall\cleaner\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.csproj.CoreCompileInputs.cache
+C:\Dev\GitHub\tiingocall\cleaner\obj\Debug\netcoreapp3.1\cleaner_driver.csprojAssemblyReference.cache
