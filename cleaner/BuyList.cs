@@ -10,7 +10,7 @@ namespace cleaner_driver
         private int YCA, underageweight;
         public Buy[] buys;
         private Buy[] discards;
-        private int dlyca;
+        private int dlyca, pot;
 
         public BuyList(int inyca)
         {
@@ -23,6 +23,7 @@ namespace cleaner_driver
         public void SetBuyList(List<List<string>> qresult)
         {
             this.dlyca = ( ( this.YCA / 52 ) / 3 );
+            this.pot = this.dlyca;
 
             this.underageweight = 0;
             List<int> underages = new List<int>();
@@ -58,42 +59,48 @@ namespace cleaner_driver
             for (short ii = 0; ii < qresult.Count; ii++)
             {
                 this.add(qresult[ii][0], underages[ii]);
+
+                this.pot = this.pot - this.buys[this.buys.Length - 1].dollar_amount;
             }
+
+            this.emptypot();
 
             while (this.buys[buys.Length - 1].dollar_amount < (this.dlyca / 10) || this.buys[buys.Length-1].dollar_amount < 105)
             {
                 this.recompute();
             }
 
-            int pot = this.buys[buys.Length - 1].dollar_amount;
+            int newpot = this.pot + this.buys[buys.Length - 1].dollar_amount;
 
             this.recompute();
 
-            this.randombuys(pot);
+            this.pot = newpot;
+
+            this.randombuys();
         }
 
-        private void randombuys(int pot)
+        private void randombuys()
         {
-            if(pot > 105)
+            if(this.pot > 105)
             {
                 int first = 105;
 
-                pot = pot - 105;
+                this.pot = this.pot - 105;
 
-                while(pot % 105 != 0)
+                while(this.pot % 105 != 0)
                 {
                     first++;
-                    pot++;
+                    this.pot--;
                 }
 
                 randomadd(first);
             }
 
-            while (pot > 0)
+            while (this.pot > 0)
             {
                 this.randomadd(105);
 
-                pot = pot - 105;
+                this.pot = this.pot - 105;
             }
 
             this.discards = new Buy[0];
@@ -133,6 +140,8 @@ namespace cleaner_driver
         {
             this.underageweight = 0;
 
+            this.pot = this.dlyca;
+
             int cap = (this.buys.Length -1), ii = 0;
             
             Buy[] referencebuys = new Buy[cap];
@@ -142,7 +151,7 @@ namespace cleaner_driver
                 if(ii < cap)
                 {
                     referencebuys[ii] = new Buy(refbuy.stock, refbuy.underage, 0);
-                    underageweight = underageweight + refbuy.underage;
+                    this.underageweight = this.underageweight + refbuy.underage;
                 }
                 else
                 {
@@ -159,8 +168,34 @@ namespace cleaner_driver
             foreach (Buy refbuy in referencebuys)
             {
                 add(refbuy.stock, refbuy.underage);
+
+                this.pot = this.pot - this.buys[this.buys.Length - 1].dollar_amount;
             }
 
+            this.emptypot();
+        }
+
+        private void emptypot()
+        {
+            int ii = 0, incrementor = 1;
+
+            while(incrementor * this.buys.Length < this.pot)
+            {
+                incrementor++;
+            }
+
+            while ((this.pot - incrementor) > 0)
+            {
+                this.buys[ii].dollar_amount = this.buys[ii].dollar_amount + incrementor;
+
+                this.pot = this.pot - incrementor;
+
+                ii++;
+            }
+
+            this.buys[ii].dollar_amount = this.buys[ii].dollar_amount + this.pot;
+
+            this.pot = 0;
         }
 
         private void addtodiscards(Buy add)
