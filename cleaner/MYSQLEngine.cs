@@ -165,6 +165,13 @@ namespace cleaner_driver
             return ret;
         }
 
+        public static string ReadYCA(in EngineQuery eq)
+        {
+            eq.query = "SELECT * FROM stockplanner.display_yearly_contribution_amount;";
+
+            return Execute(eq)[0][1];
+        }
+
         public static void ArchiveSource(in EngineQuery eq)
         {
             ArchiveSource(new CSVValues(), eq);

@@ -98,7 +98,6 @@ namespace cleaner
 
             this.values[ii] = new ManifestValue(stock, CSVValues.parse_decimal_str(stock, tpstr));
         }
-
     }
 
 

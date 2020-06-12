@@ -70,40 +70,113 @@ namespace cleaner_driver
                 this.recompute();
             }
 
-            int newpot = this.pot + this.buys[buys.Length - 1].dollar_amount;
-
-            this.recompute();
-
-            this.pot = newpot;
-
-            this.randombuys();
+            this.randombuys(this.buys[buys.Length - 1].dollar_amount);
         }
 
-        private void randombuys()
+        private void displaybuyssum()
         {
-            if(this.pot > 105)
+            int sum = 0;
+
+            foreach(Buy b in this.buys)
+            {
+                sum = sum + b.dollar_amount;
+            }
+
+            Console.WriteLine("Sum is " + sum);
+        }
+
+        private void randombuys(int lastbuy)
+        {
+            this.displaybuyssum();
+
+            this.droplastbuy();
+
+            this.displaybuyssum();
+
+            if (lastbuy > 105)
             {
                 int first = 105;
 
-                this.pot = this.pot - 105;
+                lastbuy = lastbuy - 105;
 
-                while(this.pot % 105 != 0)
+                while(lastbuy % 105 != 0)
                 {
                     first++;
-                    this.pot--;
+                    lastbuy--;
                 }
 
                 randomadd(first);
+
+                this.displaybuyssum();
             }
 
-            while (this.pot > 0)
+            while (lastbuy > 0)
             {
                 this.randomadd(105);
 
-                this.pot = this.pot - 105;
+                lastbuy = lastbuy - 105;
+
+                this.displaybuyssum();
             }
 
             this.discards = new Buy[0];
+        }
+
+        private void droplastbuy()
+        {
+            droplastbuy(false);
+        }
+
+        private void droplastbuy(bool Recalculate)
+        {
+            this.underageweight = 0;
+
+            int cap = (this.buys.Length - 1), ii = 0;
+
+            Buy[] copy = this.buys;
+
+            this.buys = new Buy[0];
+
+            foreach (Buy b in copy)
+            {
+                if (ii < cap)
+                {
+                    if (Recalculate == true)
+                    {
+                        this.add(new Buy(b.stock, b.underage, 0));
+
+                        this.underageweight = this.underageweight + b.underage;
+                    }
+                    else
+                    {
+                        this.add(b);
+                    }
+                }
+                else
+                {
+                    b.dollar_amount = 0;
+
+                    this.addtodiscards(new Buy(b.stock, -1, b.dollar_amount));
+                }
+
+                ii++;
+            }
+
+            if(Recalculate == false)
+            {
+                return;
+            }
+
+            copy = this.buys;
+
+            this.buys = new Buy[0];
+
+            foreach (Buy b in copy)
+            {
+                add(b.stock, b.underage);
+
+                this.pot = this.pot - this.buys[this.buys.Length - 1].dollar_amount;               
+            }
         }
 
         private void randomadd(int buy)
@@ -138,39 +211,9 @@ namespace cleaner_driver
 
         private void recompute()
         {
-            this.underageweight = 0;
-
             this.pot = this.dlyca;
 
-            int cap = (this.buys.Length -1), ii = 0;
-            
-            Buy[] referencebuys = new Buy[cap];
-
-            foreach (Buy refbuy in this.buys)
-            {
-                if(ii < cap)
-                {
-                    referencebuys[ii] = new Buy(refbuy.stock, refbuy.underage, 0);
-                    this.underageweight = this.underageweight + refbuy.underage;
-                }
-                else
-                {
-                    refbuy.dollar_amount = 0;
-
-                    this.addtodiscards(refbuy);
-                }
-
-                ii++;
-            }
-
-            this.buys = new Buy[0];
-
-            foreach (Buy refbuy in referencebuys)
-            {
-                add(refbuy.stock, refbuy.underage);
-
-                this.pot = this.pot - this.buys[this.buys.Length - 1].dollar_amount;
-            }
+            this.droplastbuy(true);
 
             this.emptypot();
         }

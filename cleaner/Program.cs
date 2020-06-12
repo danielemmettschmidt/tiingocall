@@ -55,13 +55,10 @@ namespace cleaner
                     }
 
                     _parser.ComputeBuyList();
-
                 }
 
                 Console.ReadLine();
-
             }
-
         }
 
         static string ImprovedGetAssembly()

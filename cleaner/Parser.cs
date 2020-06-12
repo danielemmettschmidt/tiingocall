@@ -4,9 +4,18 @@ using System.Collections.Generic;
 using System.Text;
 using cleaner_driver;
 using System.Diagnostics.Contracts;
+using System.Runtime.InteropServices;
 
 namespace cleaner
 {
+    enum YCA_File_Status_Is
+    {
+        File_Found_and_Parsed,
+        File_Found_but_Parse_Failed,
+        No_File_Found,
+        Failed
+    }
+
     class Parser
     {
 
@@ -71,6 +80,8 @@ namespace cleaner
                 return false;
             }
 
+            this.has_yca_file = true;
+
             try
             {
                 this.yearly_contribution_filepath = getfilename(initdir, ".yca");
@@ -80,8 +91,6 @@ namespace cleaner
                 this.yearly_contribution_filepath = "";
                 this.has_yca_file = false;
             }
-
-            this.has_yca_file = true;
             
             return true;
         }
@@ -100,6 +109,20 @@ namespace cleaner
         }
 
         public bool SetYCAValue()
+        {
+            switch(this.ProcessYCAValue())
+            {
+                case YCA_File_Status_Is.File_Found_and_Parsed:
+                    File.Delete(this.yearly_contribution_filepath);
+                    return true;
+                case YCA_File_Status_Is.No_File_Found:
+                    return true;
+                default:
+                    return false;
+            }                
+        }
+
+        private YCA_File_Status_Is ProcessYCAValue()
         {
             short ii = 0;
 
@@ -132,32 +155,34 @@ namespace cleaner
                         catch (Exception ex)
                         {
                             Console.WriteLine("Failed to construct buylist from file " + this.yearly_contribution_filepath + " exception message: " + ex.Message);
-                            return false;
+                            return YCA_File_Status_Is.File_Found_but_Parse_Failed;
                         }
 
                         try
                         {
                             MYSQLEngine.WriteYCA(this.eq, parsedstr);
 
-                            //////////////////////////////////////////////////////write function to delete yca file
-
-                            return true;
+                            return YCA_File_Status_Is.File_Found_and_Parsed;
                         }
                         catch (Exception ex)
                         {
-                            return false;
+                            Console.WriteLine(ex.Message);
+
+                            return YCA_File_Status_Is.Failed;
                         }
                     }
+
+                    ii++;
                 }
-                return false;
+
+                return YCA_File_Status_Is.Failed;
             }
             else
             {
-                //////////////////////////////////////////////////////////////////pull value from yca view
-                
-                
-                return false;
-            }        
+                this.buylist = new BuyList(Int32.Parse(MYSQLEngine.ReadYCA(this.eq)));
+
+                return YCA_File_Status_Is.No_File_Found;
+            }
         }
 
         public bool BuildReadValues()
