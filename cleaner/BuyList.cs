@@ -65,12 +65,14 @@ namespace cleaner_driver
 
             this.emptypot();
 
-            while (this.buys[buys.Length - 1].dollar_amount < (this.dlyca / 10) || this.buys[buys.Length-1].dollar_amount < 105)
+            int REMNANT = (this.dlyca / 5);
+
+            while (this.buys[buys.Length - 1].dollar_amount < REMNANT || this.buys[buys.Length-1].dollar_amount < 105)
             {
                 this.recompute();
             }
 
-            this.randombuys(this.buys[buys.Length - 1].dollar_amount);
+            this.randombuys(REMNANT);
         }
 
         private void displaybuyssum()
@@ -85,38 +87,34 @@ namespace cleaner_driver
             Console.WriteLine("Sum is " + sum);
         }
 
-        private void randombuys(int lastbuy)
+        private void randombuys(int remnant)
         {
-            this.displaybuyssum();
+            this.pot = (this.buys[buys.Length - 1].dollar_amount - remnant);
 
             this.droplastbuy();
+            
+            this.emptypot();
 
-            this.displaybuyssum();
-
-            if (lastbuy > 105)
+            if (remnant > 105)
             {
                 int first = 105;
 
-                lastbuy = lastbuy - 105;
+                remnant = remnant - 105;
 
-                while(lastbuy % 105 != 0)
+                while(remnant % 105 != 0)
                 {
                     first++;
-                    lastbuy--;
+                    remnant--;
                 }
 
                 randomadd(first);
-
-                this.displaybuyssum();
             }
 
-            while (lastbuy > 0)
+            while (remnant > 0)
             {
                 this.randomadd(105);
 
-                lastbuy = lastbuy - 105;
-
-                this.displaybuyssum();
+                remnant = remnant - 105;
             }
 
             this.discards = new Buy[0];
