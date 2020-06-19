@@ -40,6 +40,7 @@ namespace cleaner_driver
 
 
                 MySqlCommand cmd = new MySqlCommand(EQ.query, conn);
+
                 MySqlDataReader rdr = cmd.ExecuteReader();
 
 
@@ -63,6 +64,10 @@ namespace cleaner_driver
                 }
 
                 rdr.Close();
+            }
+            catch (MySql.Data.MySqlClient.MySqlException pwex)
+            {
+                throw pwex;
             }
             catch (Exception ex)
             {
@@ -120,12 +125,30 @@ namespace cleaner_driver
 
         }
 
+        public static bool CheckPW(EngineQuery eq)
+        {
+            try
+            {
+                eq.query = "SELECT * FROM stockplanner.view_portfolio;";
+
+                Execute(eq);
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static void WriteSource(Parser parser)
         {
+            if(parser.has_csv_file == true)
+            {
+                // write old table to archive
 
-            // write old table to archive
-
-            ArchiveSource(parser.readvalues, parser.eq);
+                ArchiveSource(parser.readvalues, parser.eq);
+            }
 
             // drop old table
 
@@ -157,12 +180,17 @@ namespace cleaner_driver
         public static CSVValues ReadSource(in EngineQuery eq)
         {
             eq.query = "SELECT * FROM stockplanner.source;";
+            try
+            {
+                CSVValues ret = new CSVValues(Execute(eq));
+                eq.query = "";
 
-            CSVValues ret = new CSVValues(Execute(eq));
-
-            eq.query = "";
-
-            return ret;
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public static string ReadYCA(in EngineQuery eq)

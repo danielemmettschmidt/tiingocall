@@ -8,12 +8,25 @@ using System.Runtime.InteropServices;
 
 namespace cleaner
 {
-    enum YCA_File_Status_Is
+    enum File_Status_Is
     {
         File_Found_and_Parsed,
         File_Found_but_Parse_Failed,
         No_File_Found,
         Failed
+    }
+
+    public class NoSuchFileException : Exception
+    {
+        public NoSuchFileException()
+        {
+        }
+
+        public NoSuchFileException(string message)
+            : base(message)
+        {
+        }
+
     }
 
     class Parser
@@ -29,29 +42,38 @@ namespace cleaner
 
         public EngineQuery eq;
 
-        public bool isstillgood, has_yca_file;
+        public bool isstillgood, has_csv_file, has_yca_file;
 
         public Parser(string initdir, EngineQuery ineq)
         {
             this.eq = ineq;
 
             this.isstillgood = this.getfilenames(initdir);
+        }
 
-            if(this.isstillgood == true)
+        public void Initialize()
+        {
+            try
             {
-                this.isstillgood = this.SetYCAValue();
-            }
+                if (this.isstillgood == true)
+                {
+                    this.isstillgood = this.SetYCAValue();
+                }
 
-            if (this.isstillgood == true)
+                if (this.isstillgood == true)
+                {
+                    this.isstillgood = this.BuildReadValues();
+                }
+
+                if (this.isstillgood == true)
+                {
+                    this.isstillgood = this.BuildManifestValues();
+                }
+            }
+            catch(Exception ex)
             {
-                this.isstillgood = this.BuildReadValues();
+                throw ex;
             }
-
-            if (this.isstillgood == true)
-            {
-                this.isstillgood = this.BuildManifestValues();
-            }
-
         }
 
         public void ComputeBuyList()
@@ -69,12 +91,20 @@ namespace cleaner
 
         public bool getfilenames(string initdir)
         {
+
+
+            this.has_csv_file = true;
+
             try
             {
                 this.csv_filepath = getfilename(initdir, ".csv");
-                this.manifest_filepath = getfilename(initdir, ".manifest");
             }
-            catch(Exception ex)
+            catch (NoSuchFileException nsfex)
+            {
+                this.csv_filepath = "";
+                this.has_csv_file = false;
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return false;
@@ -82,16 +112,24 @@ namespace cleaner
 
             this.has_yca_file = true;
 
+            this.manifest_filepath = getfilename(initdir, ".manifest");
+
             try
             {
                 this.yearly_contribution_filepath = getfilename(initdir, ".yca");
             }
-            catch(Exception ex)
+            catch(NoSuchFileException nsfex)
             {
                 this.yearly_contribution_filepath = "";
                 this.has_yca_file = false;
             }
-            
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+
             return true;
         }
 
@@ -105,24 +143,24 @@ namespace cleaner
                 }
             }
 
-            throw new Exception("No file with ending \"" + search + "\" found in " + dir + ".");
+            throw new NoSuchFileException("No file with ending \"" + search + "\" found in " + dir + ".");
         }
 
         public bool SetYCAValue()
         {
             switch(this.ProcessYCAValue())
             {
-                case YCA_File_Status_Is.File_Found_and_Parsed:
+                case File_Status_Is.File_Found_and_Parsed:
                     File.Delete(this.yearly_contribution_filepath);
                     return true;
-                case YCA_File_Status_Is.No_File_Found:
+                case File_Status_Is.No_File_Found:
                     return true;
                 default:
                     return false;
             }                
         }
 
-        private YCA_File_Status_Is ProcessYCAValue()
+        private File_Status_Is ProcessYCAValue()  //   BUY LIST IS INITIALLY CONSTRUCTED HERE, BUT NOT POPULATED
         {
             short ii = 0;
 
@@ -155,46 +193,56 @@ namespace cleaner
                         catch (Exception ex)
                         {
                             Console.WriteLine("Failed to construct buylist from file " + this.yearly_contribution_filepath + " exception message: " + ex.Message);
-                            return YCA_File_Status_Is.File_Found_but_Parse_Failed;
+                            return File_Status_Is.File_Found_but_Parse_Failed;
                         }
 
                         try
                         {
                             MYSQLEngine.WriteYCA(this.eq, parsedstr);
 
-                            return YCA_File_Status_Is.File_Found_and_Parsed;
+                            return File_Status_Is.File_Found_and_Parsed;
                         }
                         catch (Exception ex)
                         {
                             Console.WriteLine(ex.Message);
 
-                            return YCA_File_Status_Is.Failed;
+                            return File_Status_Is.Failed;
                         }
                     }
 
                     ii++;
                 }
 
-                return YCA_File_Status_Is.Failed;
+                return File_Status_Is.Failed;
             }
             else
             {
                 this.buylist = new BuyList(Int32.Parse(MYSQLEngine.ReadYCA(this.eq)));
 
-                return YCA_File_Status_Is.No_File_Found;
+                return File_Status_Is.No_File_Found;
             }
         }
 
         public bool BuildReadValues()
         {
-            try
+            if(this.has_csv_file == true)
             {
-                this.readvalues = new CSVValues(this.csv_filepath);
+                try
+                {
+                    this.readvalues = new CSVValues(this.csv_filepath);
+
+                    File.Delete(this.csv_filepath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return false;
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.Message);
-                return false;
+                Console.WriteLine("\n\nNo CSV file was found, building portfolio values from database.");
+                this.readvalues = MYSQLEngine.ReadSource(this.eq);
             }
 
             return true;
