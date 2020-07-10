@@ -7,7 +7,7 @@ namespace cleaner_driver
 {
     class BuyList
     {
-        private int YCA, underageweight;
+        private int YCA, underageweight, initialRows;
         public Buy[] buys;
         private Buy[] discards;
         private int dlyca, pot;
@@ -20,15 +20,11 @@ namespace cleaner_driver
             this.dlyca = -1;
         }
 
-        public void SetBuyList(List<List<string>> qresult)
+        private List<int> setunderages(List<List<string>> qresult)
         {
-            this.dlyca = ( ( this.YCA / 52 ) / 3 );
-            this.pot = this.dlyca;
-
-            this.underageweight = 0;
             List<int> underages = new List<int>();
 
-            foreach(List<string> row in qresult)
+            foreach (List<string> row in qresult)
             {
                 if (row.Count != 2)
                 {
@@ -36,7 +32,7 @@ namespace cleaner_driver
 
                     foreach (string cell in row)
                     {
-                        buildex = "<" + buildex + ">"; 
+                        buildex = "<" + buildex + ">";
                     }
 
                     throw new Exception("Incorrect number of cells found in row " + buildex);
@@ -56,6 +52,19 @@ namespace cleaner_driver
                 }
             }
 
+            return underages;
+        }
+
+        public void SetBuyList(List<List<string>> qresult)
+        {
+            this.initialRows = qresult.Count;
+            this.dlyca = ( ( this.YCA / 52 ) / 3 );
+            this.pot = this.dlyca;
+
+            this.underageweight = 0;
+
+            List<int> underages = setunderages(qresult);
+
             for (short ii = 0; ii < qresult.Count; ii++)
             {
                 this.add(qresult[ii][0], underages[ii]);
@@ -65,34 +74,41 @@ namespace cleaner_driver
 
             this.emptypot();
 
-            int REMNANT = (this.dlyca / 5);
+            int minimumbuy = (this.dlyca / 5);
 
-            while (this.buys[buys.Length - 1].dollar_amount < REMNANT || this.buys[buys.Length-1].dollar_amount < 105)
+            while (this.buys[buys.Length - 1].dollar_amount < minimumbuy || this.buys[buys.Length-1].dollar_amount < 105)
             {
                 this.recompute();
             }
 
-            this.randombuys(REMNANT);
+            this.randombuys(minimumbuy);
+
+            this.discards = new Buy[0];
         }
 
-        private void displaybuyssum()
+        private void checkrunaway(int xii, string functionname)
         {
-            int sum = 0;
-
-            foreach(Buy b in this.buys)
+            if (xii > this.initialRows)
             {
-                sum = sum + b.dollar_amount;
+                throw new Exception("Function " + functionname + " has run " + xii + " times, which is too many based on an original buylist row count of " + this.initialRows + ".");
             }
-
-            Console.WriteLine("Sum is " + sum);
         }
 
         private void randombuys(int remnant)
         {
+            int xii;
+
             this.pot = (this.buys[buys.Length - 1].dollar_amount - remnant);
 
-            this.droplastbuy();
-            
+            if (this.buys.Length > 1)
+            {
+                this.droplastbuy();
+            }
+            else
+            {
+                return;
+            }
+                        
             this.emptypot();
 
             if (remnant > 105)
@@ -102,7 +118,7 @@ namespace cleaner_driver
                 remnant = remnant - 105;
 
                 while(remnant % 105 != 0)
-                {
+                {                    
                     first++;
                     remnant--;
                 }
@@ -116,8 +132,6 @@ namespace cleaner_driver
 
                 remnant = remnant - 105;
             }
-
-            this.discards = new Buy[0];
         }
 
         private void droplastbuy()
@@ -222,11 +236,13 @@ namespace cleaner_driver
 
             while(incrementor * this.buys.Length < this.pot)
             {
+                checkrunaway(incrementor, "emptypot (computing incrementation)");
                 incrementor++;
             }
 
             while ((this.pot - incrementor) > 0)
             {
+                checkrunaway(ii, "emptypot (distributing pot)");
                 this.buys[ii].dollar_amount = this.buys[ii].dollar_amount + incrementor;
 
                 this.pot = this.pot - incrementor;
