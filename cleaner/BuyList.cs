@@ -96,12 +96,10 @@ namespace cleaner_driver
 
         private void randombuys(int remnant)
         {
-            int xii;
-
-            this.pot = (this.buys[buys.Length - 1].dollar_amount - remnant);
-
             if (this.buys.Length > 1)
             {
+                this.pot = (this.buys[buys.Length - 1].dollar_amount - remnant);
+
                 this.droplastbuy();
             }
             else

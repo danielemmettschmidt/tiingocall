@@ -17,19 +17,29 @@ namespace cleaner
 
     class CSVValues
     {
-        public short stockcolnum, valcolnum, quantcolnum;
+        public short stockcolnum, valcolnum, quantcolnum, commas;
         public bool initialized;
         public string id;
         public CSVValue[] values;
 
         public CSVValues()
         {
+            this.commas = 0;
+            this.stockcolnum = -1;
+            this.valcolnum = -1;
+            this.quantcolnum = -1;
+
             this.values = new CSVValue[0];
             this.initialized = false;
         }
 
         public CSVValues(List<List<string>> input)
         {
+            this.commas = 0;
+            this.stockcolnum = -1;
+            this.valcolnum = -1;
+            this.quantcolnum = -1;
+
             this.values = new CSVValue[0];
             foreach (List<string> row in input)
             {
@@ -45,24 +55,26 @@ namespace cleaner
 
         public CSVValues(string csvfilepath)
         {
+            this.commas = 0;
+            this.stockcolnum = -1;
+            this.valcolnum = -1;
+            this.quantcolnum = -1;
+
             this.values = new CSVValue[0];
 
             short ii = 0;
 
-            foreach (string line in File.ReadLines(csvfilepath))
+            foreach (string lline in File.ReadLines(csvfilepath))
             {
+                string line = cleanquotes(lline);
+
                 if (ii == 0)
                 {
                     this.grabindexes(line);
                 }
                 else
-                {
-                    if (ii == 1)
-                    {
-                        this.id = line.Split(',')[0];
-                    }
-
-                    if (line.Split(',')[0] == this.id)
+                {                    
+                    if (countcommas(line) == this.commas)
                     {
                         try
                         {
@@ -121,9 +133,57 @@ namespace cleaner
             return read;
         }
 
+        private string cleanquotes(string inp)
+        {
+            string ret = "", last = "";
+
+            int on = 1;
+
+            foreach (char c in inp)
+            {
+                ret = ret + last;
+
+                if (c == '\"')
+                {
+                    on = on * -1;
+                }
+                else
+                {
+                    if (c != ',' || (c == ',' && on == 1))
+                    {
+                        last = "" + c;
+                    }
+                }
+            }
+
+            if (last != ",")
+            {
+                ret = ret + last;
+            }
+
+            return ret;
+        }
+
+        private short countcommas(string inp)
+        {
+            short commas = 0;
+
+            foreach (char c in inp)
+            {
+                if (c == ',')
+                {
+                    commas++;
+                }
+            }
+
+            return commas;
+        }
+
         public void grabindexes(string titleline)
         {
             short ii = 0;
+
+            this.commas = countcommas(titleline);
 
             foreach (string cell in titleline.ToLower().Split(','))
             {
@@ -143,6 +203,21 @@ namespace cleaner
                 }
 
                 ii++;
+            }
+
+            if (this.stockcolnum == -1)
+            {
+                throw new Exception("Failed to find stock symbol column.");
+            }
+
+            if (this.valcolnum == -1)
+            {
+                throw new Exception("Failed to find current value column.");
+            }
+
+            if (this.quantcolnum == -1)
+            {
+                throw new Exception("Failed to find quantity column.");
             }
         }
 
